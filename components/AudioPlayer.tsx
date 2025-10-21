@@ -2,35 +2,57 @@ import React, { useState, useRef, useEffect } from 'react';
 
 export const AudioPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  // Use useRef to hold the audio instance.
-  // The audio file is expected to be in the `public` folder.
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Initialize Audio object only on the client-side
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // The audio file is expected to be in the `public` folder at the project root.
       audioRef.current = new Audio('/audio1.mp3');
       
       const audio = audioRef.current;
       const onEnded = () => setIsPlaying(false);
-      audio.addEventListener('ended', onEnded);
       
-      // Cleanup listener on component unmount
+      const onError = (e: Event) => {
+        console.error("Audio player error:", e);
+        // This error often means the file was not found (404), leading to the "no supported sources" error.
+        // Alert the user with the most likely solution.
+        alert("Error: Could not load audio file.\n\nPlease ensure 'audio1.mp3' is placed inside a 'public' folder in your project's root directory and then reload the page.");
+        setIsPlaying(false);
+      };
+
+      audio.addEventListener('ended', onEnded);
+      audio.addEventListener('error', onError);
+      
+      // Cleanup listeners on component unmount
       return () => {
-        audio.removeEventListener('ended', onEnded);
+        if (audio) {
+            audio.removeEventListener('ended', onEnded);
+            audio.removeEventListener('error', onError);
+        }
       };
     }
   }, []);
 
-  const togglePlayPause = () => {
+  const togglePlayPause = async () => {
     if (!audioRef.current) return;
 
     if (isPlaying) {
       audioRef.current.pause();
+      setIsPlaying(false);
     } else {
-      audioRef.current.play();
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      } catch (error) {
+        // The play() promise can be rejected if the source is not found/supported,
+        // or for other reasons like the user not having interacted with the page yet.
+        console.error("Audio playback failed:", error);
+        // The 'error' event listener above will likely have already fired
+        // with a more specific message for the user if the file is missing.
+        setIsPlaying(false);
+      }
     }
-    setIsPlaying(!isPlaying);
   };
 
   return (

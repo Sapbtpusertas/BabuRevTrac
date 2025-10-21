@@ -1,15 +1,18 @@
 import React from 'react';
 import { Module } from '../types';
 
-// Fix: Replace JSX with React.createElement to be compatible with .ts files.
 const ChapterContentWrapper = ({ children }: { children: React.ReactNode }) => (
-  React.createElement('div', { className: "text-gray-700 leading-relaxed" }, children)
+  React.createElement('div', { className: "text-gray-700 leading-relaxed modal-content-container" }, children)
 );
 
-// Fix: Replace JSX with React.createElement to be compatible with .ts files.
 const H3 = ({ children }: { children: React.ReactNode }) => React.createElement('h3', { className: "text-xl font-semibold text-blue-700 mt-6 mb-2" }, children);
-// Fix: Replace JSX with React.createElement to be compatible with .ts files.
-const P = ({ children }: { children: React.ReactNode }) => React.createElement('p', { className: "mb-4" }, children);
+const H4 = ({ children }: { children: React.ReactNode }) => React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mt-4 mb-2" }, children);
+const P = ({ children }: { children: React.ReactNode[] }) => React.createElement('p', { className: "mb-4" }, ...children);
+const Sup = ({ children }: { children: React.ReactNode }) => React.createElement('sup', null, children);
+const Callout = ({ children }: { children: React.ReactNode }) => React.createElement('div', { className: 'bg-blue-50 border-l-4 border-blue-400 p-4 my-6 rounded-r-lg' }, React.createElement('p', { className: 'text-blue-800' }, children));
+const Figure = ({ children }: { children: React.ReactNode }) => React.createElement('div', { className: 'figure-caption' }, children);
+
+const createList = (items: React.ReactNode[]) => React.createElement('ul', { className: 'list-disc list-inside my-4 space-y-2' }, ...items.map((item, i) => React.createElement('li', { key: i }, item)));
 
 
 export const modulesData: Module[] = [
@@ -17,74 +20,270 @@ export const modulesData: Module[] = [
     id: 'modal-ch1',
     title: 'Chapter 1: Introduction to Rev-Trac Platinum',
     description: 'Beyond Standard SAP TMS: The Case for Automated Change Management, Architectural Overview, and the Four Pillars.',
-    // Fix: Replace JSX with React.createElement to be compatible with .ts files.
     content: React.createElement(ChapterContentWrapper, null,
-        React.createElement(P, null, "In the intricate and mission-critical world of SAP, managing changes across complex landscapes is a paramount challenge. The stability of production systems, the integrity of business processes, and the adherence to strict compliance mandates all hinge on the ability to control how, when, and why changes are introduced. While the standard SAP Transport Management System (TMS) provides a basic mechanism for moving development objects, it falls short in providing the automation, governance, and visibility required by modern enterprises. This chapter introduces Rev-Trac Platinum, a comprehensive change management automation platform by Revelation Software Concepts (RSC), designed to address these shortcomings and serve as a cornerstone for SAP DevOps and operational excellence."),
-        React.createElement(H3, null, "1.1 Beyond Standard SAP TMS: The Case for Automated Change Management"),
-        React.createElement(P, null, "The traditional methodology for managing SAP changes relies heavily on the native Transport Management System (TMS) augmented by manual coordination and tracking. In many organizations, this process is governed by spreadsheets, email chains, and frequent status meetings. This approach is not only inefficient but also fraught with risk. As landscapes grow in complexity—with multiple project streams, parallel development for business-as-usual (BAU) support, and geographically dispersed teams—manual tracking becomes unwieldy and error-prone."),
-        React.createElement(P, null, "A common and dangerous outcome of this manual process is the deployment of SAP transport requests into production out of sequence, leading to system instability, data inconsistencies, and costly business disruptions. Rev-Trac was conceived to solve these fundamental problems. It is an SAP \"Bolt-on\" tool, meaning it is an ABAP-based application that is installed directly into an SAP system, operating as a native add-on. This architectural choice allows for deep and seamless integration with the SAP core."),
-        React.createElement(P, null, "Rev-Trac provides a centralized platform for controlling and automating the entire lifecycle of configuration and development changes, from the initial request in a development environment through quality assurance, user acceptance testing, and final deployment to production. By enforcing a structured, repeatable, and auditable process, it ensures that there are no object conflicts and that all changes are transported in the necessary sequence, thereby safeguarding the production environment."),
-        React.createElement(P, null, "The necessity for such a tool stems from the inherent limitations of standard TMS. Native TMS is a transport mechanism, not a change management system. It lacks workflow automation, enforceable approval gates, dependency analysis, and a consolidated audit trail that links a technical transport to a business requirement. Rev-Trac fills this gap by wrapping a layer of intelligent automation and governance around the core transport process, transforming it from a simple logistical function into a managed, strategic capability."),
-        React.createElement(H3, null, "1.2 Architectural Overview: The ABAP Core and the WebCore Integration Hub"),
-        React.createElement(P, null, "Rev-Trac Platinum's power and flexibility derive from its sophisticated dual architecture, which combines the stability of a native SAP solution with the openness of a modern web-based integration platform. Understanding this hybrid model is fundamental to leveraging the full capabilities of the tool."),
-        React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mt-4 mb-2" }, "The ABAP Core"),
-        React.createElement(P, null, "The foundation of Rev-Trac is its tightly controlled, SAP-certified ABAP add-on. This core component is installed into a designated SAP system within the landscape, referred to as the \"Rev-Trac Master\" or \"Central Instance\". All change management logic, workflow processing, and core configuration reside within this ABAP engine. Because it runs natively within SAP, the ABAP core can directly interact with system tables, call standard SAP function modules, and leverage the existing SAP user management and security framework. This \"bolt-on\" nature simplifies administration for SAP Basis teams, as the tool is managed using familiar SAP concepts and transactions. However, it also means that the availability of the central change management control point is directly dependent on the uptime of the host SAP system—a critical consideration for planning system maintenance."),
-        React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mt-4 mb-2" }, "The WebCore Integration Hub"),
-        React.createElement(P, null, "The modern evolution of the platform is the Rev-Trac WebCore, a web-based interface and integration hub that extends the capabilities of the classic ABAP layer. The WebCore is typically deployed on a separate Virtual Machine (VM) and communicates with the ABAP core. Its primary function is to serve as a gateway to the broader enterprise IT ecosystem by exposing a comprehensive set of REST APIs. This enables bi-directional integration with a wide array of third-party Application Lifecycle Management (ALM) and DevOps tools, including Jira, ServiceNow, Azure DevOps, and SAP's own Cloud ALM."),
-        React.createElement(P, null, "This dual architecture signifies a strategic evolution for Rev-Trac... This allows workflows to originate and be managed in non-SAP systems (e.g., an incident in ServiceNow can automatically trigger a change process in Rev-Trac), preventing the SAP landscape from becoming an isolated silo with its own disparate processes."),
-        React.createElement(H3, null, "1.3 The Four Pillars: Deconstructing Automation, Acceleration, Compliance, and Stability & Security"),
-        React.createElement(P, null, "The design philosophy and feature set of Rev-Trac Platinum are structured around four foundational pillars. These pillars represent the core value propositions of the platform and provide a framework for understanding its capabilities."),
-        React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mt-4 mb-2" }, "Automation"),
-        React.createElement(P, null, "This pillar focuses on eliminating the high-risk, error-prone manual tasks... Rev-Trac automates key processes, including the migration of transports between systems, the routing of change requests for approval, the collection of digital signatures, and the generation of documentation. By replacing manual handoffs with a consistent, repeatable workflow, it significantly reduces the likelihood of human error..."),
-        React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mt-4 mb-2" }, "Acceleration"),
-        React.createElement(P, null, "In today's business environment, the speed of change is a competitive differentiator. The Acceleration pillar addresses the need for faster and more frequent delivery of SAP changes. Rev-Trac is engineered to support modern development methodologies such as Agile and DevOps, enabling a Continuous Integration/Continuous Deployment (CI/CD) pipeline for SAP."),
-        React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mt-4 mb-2" }, "Compliance"),
-        React.createElement(P, null, "For many organizations... demonstrating compliance with internal policies and external regulations (such as Sarbanes-Oxley (SOX), GxP, or FDA 21 CFR Part 11) is a non-negotiable requirement. The platform enforces predefined change management processes, ensuring that no step is bypassed. It automatically generates a complete, unalterable audit trail for every change..."),
-        React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mt-4 mb-2" }, "Stability & Security"),
-        React.createElement(P, null, "The ultimate goal... is to deliver value without disrupting business operations. This pillar encompasses the advanced safety features... Rev-Trac's suite of built-in quality controls, such as the Overtake and Overwrite Protection System (OOPS), advanced object locking for parallel development, and dependency checking, proactively identify and prevent high-risk changes from reaching production."),
-      )
+      React.createElement(P, null, ["In the intricate and mission-critical world of SAP, managing changes across complex landscapes is a paramount challenge. The stability of production systems, the integrity of business processes, and the adherence to strict compliance mandates all hinge on the ability to control how, when, and why changes are introduced. While the standard SAP Transport Management System (TMS) provides a basic mechanism for moving development objects, it falls short in providing the automation, governance, and visibility required by modern enterprises. This chapter introduces Rev-Trac Platinum, a comprehensive change management automation platform by Revelation Software Concepts (RSC), designed to address these shortcomings and serve as a cornerstone for SAP DevOps and operational excellence."]),
+      React.createElement(H3, null, "1.1 Beyond Standard SAP TMS: The Case for Automated Change Management"),
+      React.createElement(P, null, ["The traditional methodology for managing SAP changes relies heavily on the native Transport Management System (TMS) augmented by manual coordination and tracking. In many organizations, this process is governed by spreadsheets, email chains, and frequent status meetings.", React.createElement(Sup, null, "1"), " This approach is not only inefficient but also fraught with risk. As landscapes grow in complexity—with multiple project streams, parallel development for business-as-usual (BAU) support, and geographically dispersed teams—manual tracking becomes unwieldy and error-prone. A common and dangerous outcome of this manual process is the deployment of SAP transport requests into production out of sequence, leading to system instability, data inconsistencies, and costly business disruptions.", React.createElement(Sup, null, "1")]),
+      React.createElement(Callout, null, "Key Takeaway: Standard SAP TMS is a transport tool, not a change management system. It lacks the automation and governance needed for complex enterprise environments, creating significant risk."),
+      React.createElement(P, null, ["Rev-Trac was conceived to solve these fundamental problems. It is an SAP \"Bolt-on\" tool, meaning it is an ABAP-based application that is installed directly into an SAP system, operating as a native add-on.", React.createElement(Sup, null, "3"), " This architectural choice allows for deep and seamless integration with the SAP core. Rev-Trac provides a centralized platform for controlling and automating the entire lifecycle of configuration and development changes, from the initial request in a development environment through quality assurance, user acceptance testing, and final deployment to production.", React.createElement(Sup, null, "5"), " By enforcing a structured, repeatable, and auditable process, it ensures that there are no object conflicts and that all changes are transported in the necessary sequence, thereby safeguarding the production environment.", React.createElement(Sup, null, "5")]),
+      React.createElement(P, null, ["The necessity for such a tool stems from the inherent limitations of standard TMS. Native TMS is a transport mechanism, not a change management system. It lacks workflow automation, enforceable approval gates, dependency analysis, and a consolidated audit trail that links a technical transport to a business requirement. Rev-Trac fills this gap by wrapping a layer of intelligent automation and governance around the core transport process, transforming it from a simple logistical function into a managed, strategic capability."]),
+      React.createElement(H3, null, "1.2 Architectural Overview: The ABAP Core and the WebCore Integration Hub"),
+      React.createElement(P, null, ["Rev-Trac Platinum's power and flexibility derive from its sophisticated dual architecture, which combines the stability of a native SAP solution with the openness of a modern web-based integration platform. Understanding this hybrid model is fundamental to leveraging the full capabilities of the tool."]),
+      React.createElement(H4, null, "The ABAP Core"),
+      React.createElement(P, null, ["The foundation of Rev-Trac is its tightly controlled, SAP-certified ABAP add-on.", React.createElement(Sup, null, "7"), " This core component is installed into a designated SAP system within the landscape, referred to as the \"Rev-Trac Master\" or \"Central Instance\".", React.createElement(Sup, null, "9"), " All change management logic, workflow processing, and core configuration reside within this ABAP engine. Because it runs natively within SAP, the ABAP core can directly interact with system tables, call standard SAP function modules, and leverage the existing SAP user management and security framework. This \"bolt-on\" nature simplifies administration for SAP Basis teams, as the tool is managed using familiar SAP concepts and transactions. However, it also means that the availability of the central change management control point is directly dependent on the uptime of the host SAP system—a critical consideration for planning system maintenance."]),
+      React.createElement(H4, null, "The WebCore Integration Hub"),
+      React.createElement(P, null, ["The modern evolution of the platform is the Rev-Trac WebCore, a web-based interface and integration hub that extends the capabilities of the classic ABAP layer.", React.createElement(Sup, null, "11"), " The WebCore is typically deployed on a separate Virtual Machine (VM) and communicates with the ABAP core.", React.createElement(Sup, null, "10"), " Its primary function is to serve as a gateway to the broader enterprise IT ecosystem by exposing a comprehensive set of REST APIs.", React.createElement(Sup, null, "11"), " This enables bi-directional integration with a wide array of third-party Application Lifecycle Management (ALM) and DevOps tools, including Jira, ServiceNow, Azure DevOps, and SAP's own Cloud ALM.", React.createElement(Sup, null, "11")]),
+      React.createElement(Callout, null, "Dual Architecture: The ABAP Core provides deep SAP control, while the WebCore provides modern integration, connecting SAP to the enterprise DevOps toolchain."),
+      React.createElement(P, null, ["This dual architecture signifies a strategic evolution for Rev-Trac, moving it from a pure SAP-centric tool to an enterprise-level DevOps orchestrator. While the ABAP core provides deep, reliable control over the technical SAP transport processes, the WebCore provides the agility and connectivity required to integrate SAP change management into a unified, cross-platform DevOps toolchain. This allows workflows to originate and be managed in non-SAP systems (e.g., an incident in ServiceNow can automatically trigger a change process in Rev-Trac), preventing the SAP landscape from becoming an isolated silo with its own disparate processes.", React.createElement(Sup, null, "12")]),
+      React.createElement(Figure, null, "Figure 1.1: A high-level architectural diagram showing the ABAP Core within the corporate network and the WebCore VM exposing REST APIs to external DevOps tools."),
+      React.createElement(H3, null, "1.3 The Four Pillars: Deconstructing Automation, Acceleration, Compliance, and Stability & Security"),
+      React.createElement(P, null, ["The design philosophy and feature set of Rev-Trac Platinum are structured around four foundational pillars. These pillars represent the core value propositions of the platform and provide a framework for understanding its capabilities.", React.createElement(Sup, null, "1")]),
+      createList([
+        React.createElement(React.Fragment, null, React.createElement('strong', null, 'Automation:'), " This pillar focuses on eliminating the high-risk, error-prone manual tasks that characterize traditional SAP change management... By replacing manual handoffs with a consistent, repeatable workflow, it significantly reduces the likelihood of human error...", React.createElement(Sup, null, "15")),
+        React.createElement(React.Fragment, null, React.createElement('strong', null, 'Acceleration:'), " In today's business environment, the speed of change is a competitive differentiator... Rev-Trac is engineered to support modern development methodologies such as Agile and DevOps, enabling a Continuous Integration/Continuous Deployment (CI/CD) pipeline for SAP.", React.createElement(Sup, null, "1"), React.createElement(Sup, null, "6")),
+        React.createElement(React.Fragment, null, React.createElement('strong', null, 'Compliance:'), " For many organizations... demonstrating compliance with internal policies and external regulations... is a non-negotiable requirement. The platform enforces predefined change management processes... It automatically generates a complete, unalterable audit trail for every change...", React.createElement(Sup, null, "17")),
+        React.createElement(React.Fragment, null, React.createElement('strong', null, 'Stability & Security:'), " The ultimate goal... is to deliver value without disrupting business operations. This pillar encompasses the advanced safety features... such as the Overtake and Overwrite Protection System (OOPS), advanced object locking for parallel development, and dependency checking, proactively identify and prevent high-risk changes from reaching production.", React.createElement(Sup, null, "1"), React.createElement(Sup, null, "6")),
+      ]),
+      React.createElement(P, null, ["Together, these four pillars form a comprehensive framework that unifies SAP change processes, empowering teams to minimize risk, reduce manual effort, and adapt rapidly to business needs, ensuring every change delivers value without disruption."])
+    )
   },
   {
     id: 'modal-ch2',
     title: 'Chapter 2: Pre-Implementation Planning and Installation',
     description: 'Landscape Prerequisites, Technical Requirements for the Master and WebCore VM, and the Step-by-Step Installation Process.',
-    content: React.createElement(ChapterContentWrapper, null, React.createElement(P, null, "Content for Chapter 2 goes here. This content can be expanded with detailed information about pre-implementation planning and installation steps."))
+    content: React.createElement(ChapterContentWrapper, null,
+      React.createElement(P, null, ["A successful Rev-Trac implementation begins long before the software is installed. Thorough pre-implementation planning is essential to ensure that the technical environment is prepared, project scope is clearly defined, and all stakeholder teams are aligned. This chapter provides the technical groundwork for SAP Basis Administrators, Project Managers, and Infrastructure Engineers, guiding them through the necessary preparations, technical requirements, and the phased installation process."]),
+      React.createElement(H3, null, "2.1 Landscape and System Prerequisites"),
+      React.createElement(P, null, ["Rev-Trac Platinum is designed to manage change across a wide and diverse range of SAP solutions and landscapes. Its compatibility extends from legacy SAP ECC systems to the latest SAP S/4HANA on-premise and cloud editions, as well as the SAP Business Technology Platform (BTP).", React.createElement(Sup, null, "1"), " It is fundamentally architected for complex environments involving multiple systems, parallel development tracks, and hybrid on-premise/cloud scenarios.", React.createElement(Sup, null, "3")]),
+      React.createElement(Callout, null, "Before installation, a comprehensive inventory of all SAP systems, target integrations (e.g., ServiceNow, Jira), and supporting processes is the critical first step."),
+      createList([
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'SAP Systems:'), " All SAP systems that will be managed by Rev-Trac (development, quality, production, etc.) must be identified... For managing non-ABAP changes, Rev-Trac can leverage SAP's native CTS+ (Enhanced Change and Transport System) or its own deployment add-ons.", React.createElement(Sup, null, "20")),
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Integration Points:'), " If integration with external tools is planned, the specific versions and required plugins for those tools must be confirmed... a ServiceNow integration may require the ITSM, Incident Management, and Change Management plugins to be active.", React.createElement(Sup, null, "10")),
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Test Data Management:'), " While not a direct technical prerequisite for Rev-Trac itself, a robust test data management strategy is a critical prerequisite for effective and agile change management... A partnership with solutions like EPI-USE Labs' Data Sync Manager (DSM) highlights the importance of this dependency.", React.createElement(Sup, null, "21")),
+      ]),
+      React.createElement(H3, null, "2.2 Technical Requirements: The Rev-Trac Master, WebCore VM, and Network"),
+      createList([
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'The Rev-Trac Master System:'), " The core ABAP components... must be installed on a single, designated SAP system known as the \"Rev-Trac Master\"... it must be a highly available and stable ABAP system with sufficient resources. It requires reliable RFC connectivity to every SAP system and client it will manage."),
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'The Rev-Trac WebCore VM:'), " For all modern integrations... the installation of the Rev-Trac WebCore is mandatory.", React.createElement(Sup, null, "10"), " This component is typically deployed as a Virtual Machine (VM)... The VM requires ongoing OS patching, security monitoring, and inclusion in backup and disaster recovery plans."),
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Network and Firewall Configuration:'), " A critical and often overlooked step is ensuring proper network connectivity. The implementation project must account for firewall rule changes to allow communication between the various components.", React.createElement(Sup, null, "10")),
+      ]),
+      React.createElement(Figure, null, "Figure 2.1: A diagram illustrating critical network paths: the WebCore VM to the Rev-Trac Master, the WebCore to external services, and RFC connections from the Master to all managed SAP systems."),
+      React.createElement(H3, null, "2.3 Step-by-Step Installation Guide"),
+      React.createElement(P, null, ["The installation of Rev-Trac Platinum is a structured process that is typically performed with the assistance of the vendor... The process is quantifiable, and a clear timeline with a go-live date is generally established before the project begins.", React.createElement(Sup, null, "14")]),
+      React.createElement(H4, null, "Phase 1: Scoping and Planning"),
+      React.createElement(P, null, ["Defining the project scope, identifying all systems to be managed, designing the change management workflows, and establishing the project timeline."]),
+      React.createElement(H4, null, "Phase 2: Customer Landscape Preparation"),
+      React.createElement(P, null, ["Provisioning the server for the WebCore VM, preparing the Rev-Trac Master SAP system, configuring RFCs, and implementing firewall changes."]),
+      React.createElement(H4, null, "Phase 3: Implementation and Administrator Training"),
+      React.createElement(P, null, ["Importing the Rev-Trac ABAP add-on, deploying the WebCore VM, performing foundational configuration, and conducting administrator training."]),
+      React.createElement(H4, null, "Phase 4: Landscape Go-Live, User Training, and Support"),
+      React.createElement(P, null, ["Training for end-users, and a period of hypercare support."]),
+      React.createElement(H4, null, "Phase 5: Integration with the DevOps Toolchain"),
+      React.createElement(P, null, ["Integrating with external tools like Jira and ServiceNow via the WebCore."]),
+      React.createElement(H4, null, "Phase 6: Sign-off"),
+      React.createElement(P, null, ["The formal sign-off and closure of the implementation project."])
+    )
   },
   {
     id: 'modal-ch3',
     title: 'Chapter 3: Foundational Configuration',
     description: 'Using the Rev-Trac Console, Configuring the Organization Structure (Users, Teams, Roles), and Defining the Landscape.',
-    content: React.createElement(ChapterContentWrapper, null, React.createElement(P, null, "Content for Chapter 3 goes here. This section should cover the initial setup and configuration of Rev-Trac, including user management and landscape definition."))
+    content: React.createElement(ChapterContentWrapper, null,
+      React.createElement(P, null, "Once Rev-Trac Platinum is installed, the next critical stage is to configure the application to reflect the organization's structure, landscape, and change management processes. This foundational configuration transforms the raw software into a tailored governance tool."),
+      React.createElement(H3, null, "3.1 The Rev-Trac Console: Your Central Administration Hub"),
+      React.createElement(P, null, ["The primary interface for both administrators and end-users within the SAP environment is the Rev-Trac Console. It is accessed via the SAP transaction code /RSC/RT or, more directly, /n/rsc/rt01.", React.createElement(Sup, null, "3"), " For administrators, the console's menu bar provides access to the full suite of configuration options... For end-users, the console presents a personalized dashboard... featuring tabs that provide a consolidated view of all Rev-Trac Requests (RTRs) for which they have a specific responsibility.", React.createElement(Sup, null, "25")]),
+      React.createElement(Figure, null, "Figure 3.1: An annotated screenshot of the Rev-Trac Console, highlighting the menu bar for configuration, the main panel with user-specific tabs, and the 'Create request' button."),
+      React.createElement(H3, null, "3.2 Configuring the Organization Structure: Users, Teams, and Roles"),
+      React.createElement(P, null, ["The first and most important configuration task is to map the organization's human structure into Rev-Trac. This is accomplished via the 'Organization' menu... This structure forms the basis for all approval workflows and access controls.", React.createElement(Sup, null, "22")]),
+      React.createElement(Callout, null, "A well-defined organizational structure mapping Users, Teams, and Roles is paramount for enforcing approval workflows and Segregation of Duties (SOD)."),
+      React.createElement(H4, null, "Table 3.1: Standard Rev-Trac User Roles and Responsibilities"),
+      React.createElement('table', null, 
+          React.createElement('thead', null, React.createElement('tr', null, React.createElement('th', null, 'Role Name'), React.createElement('th', null, 'Typical User Persona'), React.createElement('th', null, 'Key Responsibilities'))),
+          React.createElement('tbody', null,
+              React.createElement('tr', null, React.createElement('td', null, 'Administrator'), React.createElement('td', null, 'SAP Basis Team, Change Lead'), React.createElement('td', null, 'Full system configuration, user management, workflow design.')),
+              React.createElement('tr', null, React.createElement('td', null, 'Request Owner'), React.createElement('td', null, 'Business Analyst, Project Manager'), React.createElement('td', null, 'Overall responsibility for the change request from initiation to closure.')),
+              React.createElement('tr', null, React.createElement('td', null, 'Programmer'), React.createElement('td', null, 'ABAP Developer'), React.createElement('td', null, 'Responsible for ABAP development tasks. Performs Unit Test approvals.')),
+              React.createElement('tr', null, React.createElement('td', null, 'Customizer'), React.createElement('td', null, 'Functional Consultant'), React.createElement('td', null, 'Responsible for SAP configuration (customizing) tasks.')),
+              React.createElement('tr', null, React.createElement('td', null, 'Actor'), React.createElement('td', null, 'Current responsible person'), React.createElement('td', null, 'The user currently assigned to act on the request.')),
+              React.createElement('tr', null, React.createElement('td', null, 'Approver'), React.createElement('td', null, 'Team Lead, Manager, CAB Member'), React.createElement('td', null, 'A user designated to approve specific statuses in the workflow.')),
+              React.createElement('tr', null, React.createElement('td', null, 'Release Manager'), React.createElement('td', null, 'Release/Deployment Manager'), React.createElement('td', null, 'Manages the bundling of multiple RTRs into a release via the RMW.'))
+          )
+      ),
+      React.createElement(H3, null, "3.3 Defining the Landscape: System Registration and Transport Paths"),
+      React.createElement(P, null, ["After defining the people, the next step is to define the systems... This configuration involves two main activities: System Registration and Process and Migration Path Definition. The path a change takes through the landscape... is dynamically determined based on a combination of the 'Project' and 'Request Type' selected when a change request is created.", React.createElement(Sup, null, "25")]),
+      React.createElement(P, null, ["This highly granular and context-aware control model is a core strength of Rev-Trac. It allows an organization to move away from a rigid, one-size-fits-all change process and instead tailor the level of governance and automation to the specific risk and urgency of each change."])
+    )
   },
   {
     id: 'modal-ch4',
     title: 'Chapter 4: Mastering the Change Request Lifecycle',
     description: 'Creating a Rev-Trac Request (RTR), Managing Transports and Documentation, and the Digital Signature Approval Process.',
-    content: React.createElement(ChapterContentWrapper, null, React.createElement(P, null, "Content for Chapter 4 goes here. Detail the end-to-end process of managing a change request within Rev-Trac, from creation to approval."))
+    content: React.createElement(ChapterContentWrapper, null,
+      React.createElement(P, null, "With the foundational configuration in place, the focus shifts to the daily operational use of Rev-Trac. The entire change management process revolves around a central object: the Rev-Trac Request (RTR)."),
+      React.createElement(H3, null, "4.1 Creating a Rev-Trac Request (RTR): A Detailed Walkthrough"),
+      React.createElement(P, null, ["The lifecycle of every managed change begins with the creation of an RTR... The combination of Project and Request Type is critical as it dictates which approval workflow and migration path the RTR will follow.", React.createElement(Sup, null, "25")]),
+      React.createElement(Figure, null, "Figure 4.1: An annotated screenshot of the 'Create request details' screen, with key fields like Title, Project, and Request Type highlighted."),
+      React.createElement(H3, null, "4.2 Managing Transports and Documentation within an RTR"),
+      React.createElement(P, null, ["A foundational principle... is that every technical change (i.e., every transport) must be justified by and linked to an approved business requirement (i.e., an RTR).", React.createElement(Sup, null, "9"), " When a developer attempts to save changes... a Rev-Trac enforcement popup appears.", React.createElement(Sup, null, "27"), " This dialog prevents the creation of \"rogue\" or undocumented transports. This enforcement... fundamentally shifts developer behavior from optional compliance to mandatory, system-enforced governance.", React.createElement(Sup, null, "28")]),
+      React.createElement(Callout, null, "The 'Enforcement Popup' is a key feature that guarantees every transport is linked to an approved RTR, creating an unbreakable audit trail."),
+      React.createElement(H3, null, "4.3 The Approval Process: Digital Signatures and Status Progression"),
+      React.createElement(P, null, ["Once an RTR is created... it progresses through a series of predefined statuses... strictly controlled by the configured approval workflow.", React.createElement(Sup, null, "3"), " When an approver signs off on a status, Rev-Trac captures this as a digital signature, creating a permanent, time-stamped, and auditable record of the approval.", React.createElement(Sup, null, "3")]),
+      React.createElement(Figure, null, "Figure 4.2: A visual representation of a sample workflow, showing status progression from 'In Development' to 'Complete', with each transition marked as a digital signature approval gate."),
+      React.createElement(H3, null, "4.4 Navigating the Rev-Trac Workbench (/RSC/RTWB)"),
+      React.createElement(P, null, ["The Rev-Trac Workbench (T-code /RSC/RTWB) is the main operational dashboard for gaining visibility and control over all in-flight changes.", React.createElement(Sup, null, "3"), " The Workbench provides a powerful search facility... The search results are displayed in a hierarchical tree structure... This makes the Workbench an indispensable tool for Change Managers, Release Managers, and Basis Administrators."])
+    )
   },
   {
     id: 'modal-ch5',
     title: 'Chapter 5: Advanced Safety and Parallel Development',
     description: 'A deep dive into the Overtake and Overwrite Protection System (OOPS), Object Locking, and Automated Retrofit.',
-    content: React.createElement(ChapterContentWrapper, null, React.createElement(P, null, "Content for Chapter 5 goes here. Explain the advanced features that ensure system stability, like OOPS and object locking for parallel development."))
+    content: React.createElement(ChapterContentWrapper, null,
+      React.createElement(P, null, "Rev-Trac Platinum distinguishes itself with a suite of advanced safety features designed to protect system stability... These capabilities proactively prevent common but high-impact errors related to transport sequencing and parallel development."),
+      React.createElement(H3, null, "5.1 Deep Dive: The Overtake and Overwrite Protection System (OOPS)"),
+      React.createElement(P, null, ["The Overtake and Overwrite Protection System (OOPS) is Rev-Trac's signature and most critical safety feature.", React.createElement(Sup, null, "3"), " It is a proactive prevention system that addresses... out-of-sequence transport migrations. OOPS analyzes the version history of objects... to detect two primary types of conflicts before a migration occurs", React.createElement(Sup, null, "2"), ":"]),
+      createList([
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Overwrite (Downgrade):'), " Occurs when a transport containing an older version of an object is about to be imported into a system that already contains a newer version."),
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Overtake:'), " Occurs when a transport (Transport B) is about to be imported, but it contains an object that was more recently modified in another transport (Transport A) that has not yet been imported into the target system."),
+      ]),
+      React.createElement(Callout, null, "OOPS is the ultimate safety net. It automatically halts migrations that would cause a downgrade (Overwrite) or break dependencies (Overtake), preventing major production incidents."),
+      React.createElement(Figure, null, "Figure 5.1: A diagram illustrating OOPS conflict scenarios. 'Overwrite' shows an older version being blocked. 'Overtake' shows a transport being blocked because a newer version in another transport should be imported first."),
+      React.createElement(H3, null, "5.2 Managing Parallel Development: Object Locking and Retrofit"),
+      React.createElement(P, null, "In large organizations, it is common to have multiple development streams running in parallel (e.g., a major project (N+1) and production support (N))."),
+      React.createElement(H4, null, "Extended Object Locking"),
+      React.createElement(P, null, ["To prevent developers in different streams from unknowingly modifying the same object... Rev-Trac's Parallel Development Safety Suite provides an enhanced object locking mechanism.", React.createElement(Sup, null, "1"), " This forces cross-team communication and coordination, preventing conflicts before they are even created.", React.createElement(Sup, null, "27")]),
+      React.createElement(H4, null, "Automated Retrofit"),
+      React.createElement(P, null, ["Manually re-keying every production fix from the ECC landscape into the S/4HANA project landscape is extraordinarily time-consuming, costly, and prone to human error.", React.createElement(Sup, null, "2"), " Rev-Trac's Retrofit feature automates this process.", React.createElement(Sup, null, "7"), " This automation is a key strategic enabler for large-scale transformation projects."]),
+      React.createElement(H3, null, "5.3 Advanced Dependency Management"),
+      React.createElement(P, null, ["To manage logical dependencies... Rev-Trac allows developers to define explicit dependencies.", React.createElement(Sup, null, "3"), " By defining a \"pre-requisite\" relationship, the developer instructs Rev-Trac that one change must be successfully deployed before another is allowed to proceed.", React.createElement(Sup, null, "26")]),
+      React.createElement(Figure, null, "Figure 5.2: A screenshot of the dependency definition screen, showing how a user can specify that RTR-12345 is a pre-requisite for RTR-12346.")
+    )
   },
   {
     id: 'modal-ch6',
     title: 'Chapter 6: Orchestrating Releases with the RMW',
     description: 'Using the Release Management Workbench (RMW), Building and Locking a Release, and Executing Mass Deployments.',
-    content: React.createElement(ChapterContentWrapper, null, React.createElement(P, null, "Content for Chapter 6 goes here. Focus on the Release Management Workbench and how it facilitates coordinated mass deployments."))
+    content: React.createElement(ChapterContentWrapper, null,
+      React.createElement(P, null, "Rev-Trac's Release Management Workbench (RMW) is a powerful feature designed specifically to address the challenge of orchestrating large-scale deployments, enabling the management and deployment of many changes as a single, cohesive unit.", React.createElement(Sup, null, "13")),
+      React.createElement(H3, null, "6.1 Introduction to the Release Management Workbench (RMW)"),
+      React.createElement(P, null, ["The RMW provides a framework for grouping multiple, independent Rev-Trac Requests (RTRs) into a parent \"Release Request\".", React.createElement(Sup, null, "14"), " The main screen of the RMW typically presents a three-pane layout: Releases, Assigned Changes, and Candidate Changes.", React.createElement(Sup, null, "37")]),
+      React.createElement(H3, null, "6.2 Building, Managing, and Locking a Release"),
+      React.createElement(P, null, ["Using a drag-and-drop interface, a Release Manager can select one or more \"candidate\" RTRs... and drop them onto the desired Release Request.", React.createElement(Sup, null, "37"), " Once the scope... has been finalized... the Release Manager can lock the release.", React.createElement(Sup, null, "37"), " Locking is a critical governance step that prevents any further RTRs from being added to or removed from the release."]),
+      React.createElement(Callout, null, "The RMW transforms release management from a chaotic manual process into a simple, controlled, drag-and-drop exercise."),
+      React.createElement(H3, null, "6.3 Executing Mass Deployments and CAB Approvals"),
+      React.createElement(P, null, ["The primary efficiency gain... comes at the time of deployment. Instead of requiring someone to individually approve... dozens or even hundreds of RTRs... the RMW enables a mass deployment from a single approval action.", React.createElement(Sup, null, "15"), " Upon approval, a single authorized user... applies one digital signature to the parent Release Request.", React.createElement(Sup, null, "35"), " This single action triggers the migration of all transports contained within the release."]),
+      React.createElement(H3, null, "6.4 Applying Release-Level Safety Checks"),
+      React.createElement(P, null, ["The RMW allows for the execution of Rev-Trac's advanced safety checks at the release level before the go-live begins. The Release Manager can initiate an OOPS check or a dependency check against the entire collection of transports in the locked release.", React.createElement(Sup, null, "30"), " This pre-emptive validation is incredibly powerful... allow[ing] the Release Manager to proactively correct the content of the release... before deployment begins."])
+    )
   },
   {
     id: 'modal-ch7',
     title: 'Chapter 7: Integrating Rev-Trac into a DevOps Toolchain',
     description: 'Configuring the WebCore with API Keys and Webhooks. Bi-directional integration with ServiceNow, Jira, and SAP Cloud ALM.',
-    content: React.createElement(ChapterContentWrapper, null, React.createElement(P, null, "Content for Chapter 7 goes here. This chapter should detail the integration capabilities of Rev-Trac with other DevOps tools via the WebCore."))
+    content: React.createElement(ChapterContentWrapper, null,
+      React.createElement(P, null, "The true power of Rev-Trac Platinum is realized when it becomes the central orchestration engine for SAP changes within the larger enterprise DevOps toolchain. This integration is facilitated by the Rev-Trac WebCore."),
+      React.createElement(H3, null, "7.1 Configuring the WebCore: API Keys and Webhooks"),
+      createList([
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'API Keys:'), " An API key is a unique token that grants an external system permission to make calls into Rev-Trac's REST API. Best practice dictates creating a separate API key for each integrated system.", React.createElement(Sup, null, "39")),
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Webhooks:'), " While API calls allow external systems to pull data from or push commands to Rev-Trac, webhooks allow Rev-Trac to proactively push information to external systems.", React.createElement(Sup, null, "39")),
+      ]),
+      React.createElement(H3, null, "7.2 Bi-Directional Integration with ServiceNow"),
+      React.createElement(P, null, ["The integration between Rev-Trac and ServiceNow... connects enterprise-level IT Service Management (ITSM) with technical SAP change execution.", React.createElement(Sup, null, "12"), " The bi-directional data flow enables a unified workflow that provides visibility to all stakeholders in their native tools.", React.createElement(Sup, null, "10")]),
+      React.createElement(Callout, null, "A typical workflow: An Incident in ServiceNow automatically creates an RTR in Rev-Trac. As the RTR is processed in SAP, webhooks send real-time status updates back to ServiceNow, closing the loop."),
+      React.createElement(H3, null, "7.3 Bi-Directional Integration with Jira"),
+      React.createElement(P, null, ["For organizations employing Agile methodologies... the integration with Jira is essential.", React.createElement(Sup, null, "11"), " A key feature... is Enhanced References. A single business requirement, such as a Jira User Story, may require work from multiple developers... This results in multiple Jira sub-tasks.", React.createElement(Sup, null, "42"), " Instead of creating a separate RTR for each sub-task, Enhanced References allows all of these related Jira sub-tasks to be linked to a single, parent RTR.", React.createElement(Sup, null, "42")]),
+      React.createElement(H3, null, "7.4 Connecting with SAP Cloud ALM"),
+      React.createElement(P, null, ["With SAP Solution Manager approaching its end-of-mainstream-maintenance... Rev-Trac provides... a robust integration that allows organizations to adopt Cloud ALM without sacrificing mature change management capabilities.", React.createElement(Sup, null, "23")]),
+      React.createElement(P, null, ["In this integrated scenario, Rev-Trac acts as the powerful, enforcement-driven change management engine, while Cloud ALM serves as the project management and requirements traceability layer.", React.createElement(Sup, null, "23")])
+    )
   },
   {
     id: 'modal-ch8',
     title: 'Chapter 8: Auditing, Reporting, and Best Practices',
     description: 'Generating Audit-Ready Reports, Security Best Practices (SOD), Performance Tuning, and Common Troubleshooting.',
-    content: React.createElement(ChapterContentWrapper, null, React.createElement(P, null, "Content for Chapter 8 goes here. Cover the reporting features, security considerations, performance optimization, and troubleshooting tips."))
+    content: React.createElement(ChapterContentWrapper, null,
+      React.createElement(P, null, "The final chapter... focuses on the long-term operational aspects of managing Rev-Trac. This includes leveraging its powerful reporting features for governance and compliance, adhering to security and administrative best practices, and understanding how to troubleshoot common issues."),
+      React.createElement(H3, null, "8.1 Generating Audit-Ready Reports for Compliance"),
+      React.createElement(P, null, ["A primary benefit of implementing Rev-Trac is the dramatic simplification of internal and external audits.", React.createElement(Sup, null, "1")]),
+      React.createElement(Callout, null, "The 'Plan vs. Reality' report is a powerful auditing tool that compares where transports should be with where they actually are, instantly flagging any discrepancies or unauthorized manual imports."),
+      React.createElement(H3, null, "8.2 Security Best Practices for Rev-Trac Administration"),
+      createList([
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Enforce Segregation of Duties (SOD):'), " A critical rule is to prevent the developer who created a transport from being able to approve its migration to production.", React.createElement(Sup, null, "9")),
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Principle of Least Privilege:'), " Users should only be granted the permissions necessary to perform their job functions."),
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Secure the WebCore and API Keys:'), " API keys should be treated as sensitive credentials, stored securely, and rotated periodically.", React.createElement(Sup, null, "39")),
+          React.createElement(React.Fragment, null, React.createElement('strong', null, 'Regularly Audit Administrator Actions:'), " All administrative actions within Rev-Trac... are logged in the system log... This log should be reviewed periodically.", React.createElement(Sup, null, "47")),
+      ]),
+      React.createElement(H3, null, "8.3 Performance Tuning and System Health Checks"),
+      React.createElement(P, null, "The performance of Rev-Trac is directly tied to the health of the SAP Master System on which it runs. Standard SAP Basis performance monitoring and tuning practices are essential."),
+      React.createElement(H3, null, "8.4 Common Troubleshooting Scenarios and Solutions"),
+      React.createElement(H4, null, "Problem: OOPS Error During Migration"),
+      React.createElement(P, null, ["Symptom: A user approves a migration, but the RTR does not proceed and an OOPS error is logged.", React.createElement(Sup, null, "22"), " Solution: Open the OOPS report from the Rev-Trac Workbench to identify the conflicting objects and transports and resolve the sequence issue.", React.createElement(Sup, null, "32")]),
+      React.createElement(H4, null, "Problem: Object Locking Prevents Development"),
+      React.createElement(P, null, ["Symptom: A developer... receives a message that the object is locked by another Rev-Trac request.", React.createElement(Sup, null, "27"), " Solution: Coordinate with the owner of the locking RTR. In urgent cases, an authorized administrator can manually approve parallel development."]),
+      React.createElement(H4, null, "Problem: Automated Migration Fails"),
+      React.createElement(P, null, ["Symptom: An RTR is approved for migration, but the transport does not appear in the import history of the target system. Solution: Check the Rev-Trac migration log, then use standard Basis tools (transport logs, SM21) to check the underlying SAP infrastructure."])
+    )
+  },
+  {
+    id: 'modal-conclusion',
+    title: 'Conclusion & Works Cited',
+    description: 'A final summary of Rev-Trac Platinum\'s strategic value and a complete list of all cited works and references.',
+    content: React.createElement(ChapterContentWrapper, null,
+      React.createElement(H3, null, 'Conclusion'),
+      React.createElement(P, null, "Rev-Trac Platinum stands as a comprehensive and mature platform designed to address the inherent complexities and risks of managing change in SAP environments. It provides an integrated solution for automation, governance, and safety that is essential for any organization seeking to achieve stability, compliance, and agility in their SAP operations. Its dual architecture allows organizations to maintain rigorous, SAP-specific controls while seamlessly integrating with best-of-breed platforms like ServiceNow and Jira. Ultimately, the implementation of Rev-Trac Platinum represents a move towards a more disciplined, automated, and data-driven approach to SAP change management, empowering teams to deliver change faster, more frequently, and, most importantly, more safely."),
+      React.createElement(H3, null, 'Works Cited'),
+      React.createElement('ol', { className: 'list-decimal list-inside my-4 space-y-2 text-sm' }, 
+        ...[
+            "Rev-Trac Reviews & Product Details - G2",
+            "RevTrac Training | PDF | Information Technology - Scribd",
+            "Transport Management using Rev Trac - SAP Community",
+            "Rev-Trac with SAP| How to move Transports in correct sequence in SAP - YouTube",
+            "www.sap.com",
+            "Revelation Software Concepts Pty Ltd | Rev-Trac Platinum - SAP",
+            "Why choose Rev-Trac when embarking on a digital transformation to S/4HANA",
+            "SAP DevOps - Rev-Trac",
+            "Rev-Trac Platinum Application Use Cases - Cloudfront.net",
+            "Rev-Trac and ServiceNow: 5 essential steps to kick-off an integration!",
+            "Modernize SAP change management using Rev-Trac Platinum's WebCore",
+            "Rev-Trac SAP DevOps Integration - ServiceNow Store",
+            "Rev-Trac - SAPinsider",
+            "Change Management Automation Implementation - Insights - ASUG",
+            "Rev-Trac Platinum",
+            "How a Flexible Workflow can Guarantee SAP Compliance - Rev-Trac",
+            "How to simplify SAP DevOps audits and compliance with Rev-Trac",
+            "On-Demand Webinar: Stay audit ready with Rev Trac SAP compliance across hybrid landscapes - YouTube",
+            "How to automate SAP ECP change with Rev-Trac",
+            "Advantages - ( Revtrac & CTS+) Over Revtrac - SAP Community",
+            "EPI-USE Labs and Revelation Software Concepts forge alliance...",
+            "Familiarize with Revtrac fundamentals functions - SAP Community",
+            "No More SAP Solution Manager and the Future of SAP Change Management - ASUG",
+            "Rev-Trac : Manage and optimize your SAP change processes - Invarture",
+            "How to create new requests (SAP GUI) - Rev-Trac Resources - Confluence",
+            "Rev-Trac 7 Advanced Guide To Transport Management 1.01 | PDF - Scribd",
+            "All content - Rev-Trac Resources - Confluence - Atlassian",
+            "How Rev-Trac can enhance your SAP DevSecOps journey with Enforcement",
+            "How to add, change, remove and display attachments (SAP GUI) - Rev-Trac Resources - Confluence",
+            "How to ensure safe SAP change! - Rev-Trac",
+            "Overtake and Overwrite Protection System (OOPS) - Rev-Trac Resources - Confluence",
+            "OOPS Report - Rev-Trac Resources - Confluence",
+            "SAP digital transformation: Change control challenges...",
+            "Transfer Rules partly maintained after transport - SAP Community",
+            "How to Simplify SAP Change Audits with Automated Change Management",
+            "How to manage SAP transports with Rev-Trac's Release Management Workbench",
+            "Introducing SAP release management with Rev-Trac",
+            "Rev-Trac Release Management Workbench Demonstration - YouTube",
+            "Rev-Trac 8 Web Core Administration Guide | PDF - Scribd",
+            "ServiceNow Integration with Rev-Trac - YouTube",
+            "Jira | Rev-Trac",
+            "Unlock seamless SAP change management with Rev-Trac's Enhanced References",
+            "Cloud ALM Requirement integration with Rev-Trac Platinum... - YouTube",
+            "Advanced SAP change management with a Rev-Trac and SAP Cloud ALM integration",
+            "ChaRM vs Rev Trac - SAP Community",
+            "Audit & Compliance - Rev-Trac",
+            "RT - Full User Guide PDF | PDF - Scribd",
+            "Performance Tuning - SAP Community"
+        ].map((item, i) => React.createElement('li', {key: i}, item))
+      )
+    )
   },
   {
     id: 'modal-quiz',
