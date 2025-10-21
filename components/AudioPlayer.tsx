@@ -14,10 +14,32 @@ export const AudioPlayer: React.FC = () => {
       const onEnded = () => setIsPlaying(false);
       
       const onError = (e: Event) => {
-        console.error("Audio player error:", e);
-        // This error often means the file was not found (404), leading to the "no supported sources" error.
-        // Alert the user with the most likely solution.
-        alert("Error: Could not load audio file.\n\nPlease ensure 'audio1.mp3' is placed inside a 'public' folder in your project's root directory and then reload the page.");
+        const audioEl = e.target as HTMLAudioElement;
+        const error = audioEl.error;
+        let detailedMessage = "An unknown error occurred.";
+
+        if (error) {
+            switch (error.code) {
+                case error.MEDIA_ERR_ABORTED:
+                    detailedMessage = 'Playback was aborted by the user.';
+                    break;
+                case error.MEDIA_ERR_NETWORK:
+                    detailedMessage = 'A network error prevented the audio from loading.';
+                    break;
+                case error.MEDIA_ERR_DECODE:
+                    detailedMessage = 'The audio file is corrupted or in a format the browser cannot play.';
+                    break;
+                case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                    detailedMessage = 'The audio format is not supported or the file could not be found.';
+                    break;
+                default:
+                    detailedMessage = `An unexpected error occurred. Code: ${error.code}`;
+                    break;
+            }
+        }
+        
+        console.error("Audio player error:", detailedMessage, error);
+        alert(`Error: Could not load audio file.\n\nDetails: ${detailedMessage}\n\nPlease ensure 'audio1.mp3' is placed correctly inside a 'public' folder in your project's root directory and that the file is not corrupted.`);
         setIsPlaying(false);
       };
 
@@ -45,11 +67,10 @@ export const AudioPlayer: React.FC = () => {
         await audioRef.current.play();
         setIsPlaying(true);
       } catch (error) {
-        // The play() promise can be rejected if the source is not found/supported,
-        // or for other reasons like the user not having interacted with the page yet.
+        if (error instanceof DOMException && error.name === 'NotAllowedError') {
+            alert("Audio playback was blocked by the browser. Please interact with the page (e.g., click a button) before trying to play audio.");
+        }
         console.error("Audio playback failed:", error);
-        // The 'error' event listener above will likely have already fired
-        // with a more specific message for the user if the file is missing.
         setIsPlaying(false);
       }
     }
