@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Figure1_1 } from './figures/Figure1_1';
 
 export const AudioPlayer: React.FC = () => {
@@ -9,88 +9,93 @@ export const AudioPlayer: React.FC = () => {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressBarRef = useRef<HTMLDivElement | null>(null);
-  const animationFrameRef = useRef<number>();
+  // FIX: Explicitly initialize useRef with null to address the "Expected 1 arguments, but got 0" error.
+  const animationFrameRef = useRef<number | null>(null);
 
+  // FIX: Refactored the animation loop into a useEffect hook.
+  // This is the idiomatic React way to handle side effects like requestAnimationFrame.
+  // It resolves a stale closure bug where the `isSeeking` value would not update correctly inside the loop,
+  // making the component more robust.
   useEffect(() => {
-    // Initialize Audio object on the client-side
-    const audio = new Audio('/audio1.mp3');
-    audioRef.current = audio;
-
-    const setAudioData = () => {
-      setDuration(audio.duration);
-      setCurrentTime(audio.currentTime);
-    };
-
-    const handleEnded = () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-
-    const onError = (e: Event) => {
-      const audioEl = e.target as HTMLAudioElement;
-      const error = audioEl.error;
-      let detailedMessage = "An unknown error occurred.";
-      if (error) {
-        switch (error.code) {
-          case error.MEDIA_ERR_ABORTED: detailedMessage = 'Playback was aborted.'; break;
-          case error.MEDIA_ERR_NETWORK: detailedMessage = 'A network error occurred.'; break;
-          case error.MEDIA_ERR_DECODE: detailedMessage = 'The audio file is corrupted.'; break;
-          case error.MEDIA_ERR_SRC_NOT_SUPPORTED: detailedMessage = 'The audio format is not supported or the file could not be found.'; break;
-          default: detailedMessage = `An unexpected error occurred. Code: ${error.code}`; break;
+    if (isPlaying) {
+      const loop = () => {
+        // We check isSeeking inside the loop to ensure we use the latest state
+        if (!isSeeking && audioRef.current) {
+          setCurrentTime(audioRef.current.currentTime);
         }
-      }
-      console.error("Audio player error:", detailedMessage, error);
-      alert(`Error: Could not load audio file.\n\nDetails: ${detailedMessage}\n\nPlease ensure 'audio1.mp3' is in the 'public' folder and is not corrupted.`);
-      setIsPlaying(false);
-    };
+        animationFrameRef.current = requestAnimationFrame(loop);
+      };
+      animationFrameRef.current = requestAnimationFrame(loop);
+    }
 
-    audio.addEventListener('loadedmetadata', setAudioData);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', onError);
-
+    // The cleanup function for this effect will cancel the animation frame
+    // when isPlaying becomes false or when the component unmounts.
     return () => {
-      audio.removeEventListener('loadedmetadata', setAudioData);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', onError);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
-      audio.pause();
     };
-  }, []);
+  }, [isPlaying, isSeeking]);
 
-  const whilePlaying = useCallback(() => {
-    if (audioRef.current && !isSeeking) {
-      setCurrentTime(audioRef.current.currentTime);
-    }
-    animationFrameRef.current = requestAnimationFrame(whilePlaying);
-  }, [isSeeking]);
 
+  // Toggle play/pause state - simplified to only manage state
   const togglePlayPause = async () => {
     if (!audioRef.current) return;
 
-    const previouslyPlaying = isPlaying;
-    setIsPlaying(!previouslyPlaying);
-
-    if (!previouslyPlaying) {
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
       try {
         await audioRef.current.play();
-        animationFrameRef.current = requestAnimationFrame(whilePlaying);
+        setIsPlaying(true);
       } catch (error) {
         console.error("Audio playback failed:", error);
-        setIsPlaying(false);
-      }
-    } else {
-      audioRef.current.pause();
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+        setIsPlaying(false); // Revert state on failure
       }
     }
   };
   
+  // Handlers for the <audio> element events
+  const onLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const onEnded = () => {
+    setIsPlaying(false);
+    setCurrentTime(0);
+  };
+  
+  const onError = (e: React.SyntheticEvent<HTMLAudioElement, Event>) => {
+    const audioEl = e.currentTarget;
+    const error = audioEl.error;
+    let detailedMessage = "An unknown error occurred.";
+    if (error) {
+      switch (error.code) {
+        case error.MEDIA_ERR_ABORTED: detailedMessage = 'Playback was aborted.'; break;
+        case error.MEDIA_ERR_NETWORK: detailedMessage = 'A network error occurred while fetching the audio.'; break;
+        case error.MEDIA_ERR_DECODE: detailedMessage = 'The audio file is corrupted or could not be decoded.'; break;
+        case error.MEDIA_ERR_SRC_NOT_SUPPORTED: detailedMessage = 'The audio format is not supported or the file could not be found.'; break;
+        default: detailedMessage = `An unexpected error occurred. Code: ${error.code}`; break;
+      }
+    }
+    console.error("Audio player error:", detailedMessage, e);
+    alert(`Error: Could not load audio file.\n\nDetails: ${detailedMessage}\n\nPlease ensure 'audio1.mp3' exists in the 'public' folder.`);
+    setIsPlaying(false);
+  };
+  
+  // Cleanup effect to pause audio on unmount
+  useEffect(() => {
+    const audio = audioRef.current;
+    return () => {
+      audio?.pause();
+    };
+  }, []);
+
+  // Time formatting utility
   const formatTime = (timeInSeconds: number) => {
     if (isNaN(timeInSeconds) || timeInSeconds < 0) return '0:00';
     const minutes = Math.floor(timeInSeconds / 60);
@@ -98,6 +103,7 @@ export const AudioPlayer: React.FC = () => {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // Logic for seeking through the audio via progress bar
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!progressBarRef.current || !audioRef.current || !duration) return;
     const progressBar = progressBarRef.current;
@@ -109,20 +115,25 @@ export const AudioPlayer: React.FC = () => {
     setCurrentTime(newTime);
   };
   
+  // Effect to handle dragging the progress bar scrubber
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isSeeking && progressBarRef.current && audioRef.current && duration) {
         const progressBar = progressBarRef.current;
         const rect = progressBar.getBoundingClientRect();
         let newX = e.clientX - rect.left;
-        if (newX < 0) newX = 0;
-        if (newX > rect.width) newX = rect.width;
+        // Clamp the value within the progress bar bounds
+        newX = Math.max(0, Math.min(newX, rect.width));
         const newTime = (newX / rect.width) * duration;
         audioRef.current.currentTime = newTime;
         setCurrentTime(newTime);
       }
     };
-    const handleMouseUp = () => setIsSeeking(false);
+    
+    // Set seeking to false when mouse is released
+    const handleMouseUp = () => {
+      setIsSeeking(false);
+    };
 
     if (isSeeking) {
       window.addEventListener('mousemove', handleMouseMove);
@@ -139,11 +150,27 @@ export const AudioPlayer: React.FC = () => {
 
   return (
     <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 transition-all duration-300">
-      <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isPlaying ? 'max-h-60 opacity-100 mb-4' : 'max-h-0 opacity-0'}`}>
-        <div className="bg-white p-2 border border-gray-200 rounded-lg shadow-inner">
-          <Figure1_1 />
+      {/* The actual HTML audio element, visually hidden but controlled by our custom UI */}
+      <audio
+        ref={audioRef}
+        src="/audio1.mp3"
+        preload="metadata"
+        onLoadedMetadata={onLoadedMetadata}
+        onEnded={onEnded}
+        onError={onError}
+        hidden
+      >
+        Your browser does not support the audio element.
+      </audio>
+
+      {/* Picture-in-picture style display for the architecture diagram */}
+      <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out ${isPlaying ? 'grid-rows-[1fr] opacity-100 mb-4' : 'grid-rows-[0fr] opacity-0'}`}>
+        <div className="min-h-0 overflow-hidden">
+          <div className="bg-white p-2 border border-gray-200 rounded-lg shadow-inner">
+            <Figure1_1 />
+          </div>
+          <p className="text-xs text-center text-gray-500 mt-2 italic">Figure 1.1: Rev-Trac Architecture</p>
         </div>
-        <p className="text-xs text-center text-gray-500 mt-2 italic">Figure 1.1: Rev-Trac Architecture</p>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
